@@ -1,4 +1,7 @@
 // extract any functions you are using to manipulate your data, into this file
+const format = require('pg-format')
+const db = require('../connection')
+
 exports.formatTopics = (topicData) => {
     const mapped = topicData.map((topic) => {
         return [topic.slug, topic.description]
@@ -25,4 +28,12 @@ exports.formatComments = (commentData) => {
         return [comment.author, comment.article_id, comment.votes, comment.created_at, comment.body]
     })
     return mapped
+}
+
+exports.checkExists = async (table, column, ref) => {
+    const queryStr = format('SELECT * FROM %I WHERE %I = $1;', table, column);
+    const dbOutput = await db.query(queryStr, [ref]);
+    if (dbOutput.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not found' });
+      }
 }

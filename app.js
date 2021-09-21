@@ -1,5 +1,5 @@
 const express = require('express')
-const { handlePSQL400Errors, handleCustomErrors } = require('./errors/error.js')
+const { handlePSQL400Errors, handleCustomErrors, handle23503 } = require('./errors/error.js')
 
 const apiRouter = require('./routers/api.js');
 
@@ -16,5 +16,7 @@ app.all('*' , (req, res) => {
 app.use(handlePSQL400Errors)
 
 app.use(handleCustomErrors);
+
+app.use(handle23503);
 
 module.exports = app;
