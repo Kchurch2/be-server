@@ -2,32 +2,15 @@
 const format = require('pg-format')
 const db = require('../connection')
 
-exports.formatTopics = (topicData) => {
-    const mapped = topicData.map((topic) => {
-        return [topic.slug, topic.description]
+exports.format = (data, fields) => {
+    const mapped = data.map((item) => {
+        const returnArr = []
+        for (let i = 0; i<fields.length; i++) {
+            returnArr.push(item[fields[i]])
+        }
+    return returnArr
     })
 return mapped
-}
-
-exports.formatUsers = (userData) => {
-    const mapped = userData.map((user) => {
-        return [user.username, user.avatar_url, user.name]
-    })
-  return mapped  
-}
-
-exports.formatArticles = (articleData) => {
-    const mapped  = articleData.map((article) => {
-        return [article.title, article.body, article.votes, article.topic, article.author, article.created_at]
-    })
-  return mapped  
-}
-
-exports.formatComments = (commentData) => {
-    const mapped = commentData.map((comment) => {
-        return [comment.author, comment.article_id, comment.votes, comment.created_at, comment.body]
-    })
-    return mapped
 }
 
 exports.checkExists = async (table, column, ref) => {

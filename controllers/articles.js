@@ -1,6 +1,18 @@
-const { editArticleByID, selectArticles, fetchCommentsByArticle, postCommentsByArticle } = require('../models/articles.js')
+const { editArticleByID, selectArticles, fetchCommentsByArticle, postCommentsByArticle, selectArticleByID } = require('../models/articles.js')
 const {checkExists} = require('../db/utils/data-manipulation.js')
 
+exports.getArticleByID = async(req, res, next) => {
+  try {
+    const id = req.params.article_id
+    const article = await selectArticleByID(id)
+    if(!article) {
+      await checkExists('articles', 'article_id', id)
+    }
+    return res.status(200).send({ article })
+  } catch(err) {
+    next(err)
+  } 
+} 
 
 exports.getArticles = async(req, res, next) => {
   try {  
@@ -12,9 +24,6 @@ exports.getArticles = async(req, res, next) => {
       const articles = await selectArticles(id, query)
       if (articles.length > 1) { 
         return res.status(200).send({ articles })
-      } else if (articles.length > 0) {
-        const returnArticle = articles[0] 
-        return res.status(200).send({ articles: returnArticle })
       } else {
         await checkExists('topics', 'slug', req.query.topic)
       }

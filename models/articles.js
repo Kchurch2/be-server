@@ -1,12 +1,12 @@
 const db = require('../db/connection');
 const format = require('pg-format')
 
-// exports.selectArticleByID = async (id) => {
-//     const res = await db.query('SELECT * FROM articles\
-//                     WHERE article_id = $1', [id])
-//     console.log(res.rows)
-//     return res.rows
-// }
+exports.selectArticleByID = async (id) => {
+    const res = await db.query('SELECT * FROM articles\
+                    WHERE article_id = $1', [id])
+    console.log(res.rows)
+    return res.rows[0]
+}
 
 exports.editArticleByID = async (votes, id) => {
     const res = await db.query('UPDATE articles\
@@ -37,10 +37,6 @@ exports.selectArticles = async (id, query) => {
         }
     }
     const queryVal = []
-    if(parseInt(id)) {
-        queryStr1 += ' WHERE articles.article_id = $1'
-        queryVal.push(id)
-    }
     if(query.topic) {
         let topic = query.topic.toLowerCase()
         queryStr1 += ' WHERE articles.topic = $1'

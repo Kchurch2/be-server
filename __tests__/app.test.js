@@ -40,8 +40,8 @@ describe('GET /api/articles/:articleID', () => {
         .get('/api/articles/1')
         .expect(200)
         .then((response) => {
-            expect(response.body).toMatchObject({ articles: expect.any(Object)})
-            expect(response.body.articles).toMatchObject({
+            expect(response.body).toMatchObject({ article: expect.any(Object)})
+            expect(response.body.article).toMatchObject({
                    article_id : expect.any(Number),
                    title : expect.any(String),
                    body : expect.any(String),
@@ -203,7 +203,7 @@ describe('GET /api/articles', () => {
         .get('/api/articles?sort_by=author&order=asc&topic=cats')
         .expect(200)
         .then((response) => {
-            expect(response.body.articles.topic).toBe('cats')
+            expect(response.body.articles[0].topic).toBe('cats')
         })    
     })
     test('404 - Does not allow injection', () => {

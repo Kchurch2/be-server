@@ -1,5 +1,5 @@
 const express = require('express');
-const { patchArticleByID, getArticles, getCommentsByArticle, createCommentsByArticle } = require('../controllers/articles.js')
+const { patchArticleByID, getArticles, getCommentsByArticle, createCommentsByArticle, getArticleByID} = require('../controllers/articles.js')
 
 const articlesRouter = express.Router()
 
@@ -8,7 +8,7 @@ articlesRouter.route('/')
     .get(getArticles )
 
 articlesRouter.route('/:article_id')
-    .get(getArticles)
+    .get(getArticleByID)
     .patch(patchArticleByID)
 
 articlesRouter.route('/:article_id/comments')
