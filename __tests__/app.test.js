@@ -125,7 +125,16 @@ describe('PATCH /api/articles/:articleID', () => {
 
         });
     });  
-});
+    test('204 - No Content for bad post', () => {
+        return request(app)
+        .patch('/api/articles/1').send({})
+        .expect(204)
+        .then((response) => {
+            expect(response.body).toEqual({})
+
+        });
+    });
+})  
 
 describe('GET /api/articles', () => {
     test('200: responds with JSON object of aricles', () => {
@@ -181,12 +190,12 @@ describe('GET /api/articles', () => {
             expect(response.body.articles).toBeSortedBy('author', {descending: false})   
         })
     })    
-    test('404 - Does not allow injection', () => {
+    test('400 - Does not allow injection', () => {
         return request(app)
-        .get('/api/?sort_by=author&order=DROP TABLE topics')
-        .expect(404)
+        .get('/api/articles?sort_by=author&order=DROP TABLE topics')
+        .expect(400)
         .then((response) => {
-            expect(response.body.msg).toBe('Invalid URL')
+            expect(response.body.msg).toBe('Bad Request')
         })
     })
     test('200 - responds with JSON filtered by topic', () =>{
@@ -309,4 +318,23 @@ describe('POST api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Not found')
         }) 
     });
+    test('204 - No content', () => {
+        return request(app)
+        .post('/api/articles/1/comments').send({})
+        .expect(204)
+        .then((response) => {
+            expect(response.body).toEqual({})
+        }) 
+    })  
 });
+
+describe('GET api/', () => {
+    test('returns JSON of all endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ endpoints : expect.any(Object)})
+        })  
+    })    
+})

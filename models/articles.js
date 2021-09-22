@@ -58,10 +58,11 @@ exports.fetchCommentsByArticle = async (id) => {
 }
 
 exports.postCommentsByArticle = async (id, data) => {
+    if (!data.hasOwnProperty('body') && !data.hasOwnProperty('username')) {
+        return Promise.reject({status :204, msg : 'No Content'})
+    }
     const {username, body} = data
-    console.log(username, body, id)
     const res = await db.query('INSERT INTO comments (author, article_id, body) VALUES ($1, $2, $3) RETURNING *;', [username, id, body])
-    console.log(res)
     return res.rows[0] 
 }
 

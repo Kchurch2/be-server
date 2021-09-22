@@ -1,5 +1,6 @@
-const { formatTopics, formatArticles, formatUsers, formatComments } = require('../db/utils/data-manipulation.js')
+const { formatTopics, formatArticles, formatUsers, formatComments, checkExists } = require('../db/utils/data-manipulation.js')
 const { articleData, commentData, topicData, userData } = require('../db/data/test-data')
+const db = require('../db/connection.js')
 
 describe('formatTopics', () => {
     test('should return empty array', () => {

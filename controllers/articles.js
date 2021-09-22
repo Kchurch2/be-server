@@ -11,14 +11,14 @@ exports.getArticles = async(req, res, next) => {
       const query = req.query
       const articles = await selectArticles(id, query)
       if (articles.length > 1) { 
-        res.status(200).send({ articles })
+        return res.status(200).send({ articles })
       } else if (articles.length > 0) {
         const returnArticle = articles[0] 
-        res.status(200).send({ articles: returnArticle })
+        return res.status(200).send({ articles: returnArticle })
       } else {
         await checkExists('topics', 'slug', req.query.topic)
       }
-      res.status(200).send({ articles })
+    res.status(200).send({ articles })
     }
    } catch(err) {
         next(err)
@@ -33,7 +33,7 @@ exports.patchArticleByID = async(req, res, next) => {
       const article = await editArticleByID(votes, id)
         if (article.length > 0) { 
           const returnArticle = article[0] 
-          res.status(201).send({ article: returnArticle })
+          return res.status(201).send({ article: returnArticle })
         } else {
           await Promise.reject({ status: 404, msg: 'Not found'})
           }
@@ -42,7 +42,11 @@ exports.patchArticleByID = async(req, res, next) => {
     } 
     } else {
     try {
-    await Promise.reject({ status: 400, msg: 'Bad Request'})
+      if(!req.body.hasOwnProperty('inc_votes')) {
+        await Promise.reject({ status: 204, msg: 'No Content'}) 
+      } else {
+        await Promise.reject({ status: 400, msg: 'Bad Request'})
+      }
     } catch(err) {
       next(err)
     }
