@@ -1,4 +1,4 @@
-const { editArticleByID, selectArticles, fetchCommentsByArticle, postCommentsByArticle, selectArticleByID } = require('../models/articles.js')
+const { editArticleByID, selectArticles, fetchCommentsByArticle, postCommentsByArticle, selectArticleByID, removeArticleByID } = require('../models/articles.js')
 const {checkExists} = require('../db/utils/data-manipulation.js')
 
 exports.getArticleByID = async(req, res, next) => {
@@ -51,11 +51,7 @@ exports.patchArticleByID = async(req, res, next) => {
     } 
     } else {
     try {
-      if(!req.body.hasOwnProperty('inc_votes')) {
-        await Promise.reject({ status: 204, msg: 'No Content'}) 
-      } else {
-        await Promise.reject({ status: 400, msg: 'Bad Request'})
-      }
+      await Promise.reject({ status: 400, msg: 'Bad Request'})
     } catch(err) {
       next(err)
     }
@@ -81,6 +77,19 @@ exports.createCommentsByArticle = async (req, res, next) => {
   const data = req.body
   const comment = await postCommentsByArticle(id, data)
    res.status(201).send({ comment })
+  } catch (err) {
+    next(err)
+  }
+}
+
+exports.deleteArticleByID = async (req, res, next) => {
+  try {
+    const id = req.params.article_id
+    const article = await removeArticleByID(id)
+    if(!article) {
+      await checkExists('articles', 'article_id', id)
+    }
+    res.status(204).send()
   } catch (err) {
     next(err)
   }

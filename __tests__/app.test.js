@@ -125,12 +125,12 @@ describe('PATCH /api/articles/:articleID', () => {
 
         });
     });  
-    test('204 - No Content for bad post', () => {
+    test('400 - No Content for bad post', () => {
         return request(app)
         .patch('/api/articles/1').send({})
-        .expect(204)
+        .expect(400)
         .then((response) => {
-            expect(response.body).toEqual({})
+            expect(response.body.msg).toBe('Bad Request')
 
         });
     });
@@ -318,12 +318,12 @@ describe('POST api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Not found')
         }) 
     });
-    test('204 - No content', () => {
+    test('400 - No content', () => {
         return request(app)
         .post('/api/articles/1/comments').send({})
-        .expect(204)
+        .expect(400)
         .then((response) => {
-            expect(response.body).toEqual({})
+            expect(response.body.msg).toBe('Bad Request')
         }) 
     })  
 });
@@ -337,4 +337,96 @@ describe('GET api/', () => {
             expect(response.body).toMatchObject({ endpoints : expect.any(Object)})
         })  
     })    
+})
+
+describe('DELETE api/articles/articleID', () => {
+    test('204 No Content for Successful Test', () => {
+        return request(app)
+        .delete('/api/articles/3')
+        .expect(204)
+        .then((response) => {
+            expect(response.body).toMatchObject({})
+        })
+    })
+    test('400 bad request - injection', () => {
+        return request(app)
+        .delete('/api/articles/ DROP TABLE articles')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })
+    })
+    test('204  - out of range', () => {
+        return request(app)
+        .delete('/api/articles/305')
+        .expect(204)
+        .then((response) => {
+            expect(response.body).toMatchObject({})
+        })
+    });
+    test('404 not found for incorrect string', () => {
+        return request(app)
+        .delete('/api/articles/id_str')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })
+    });
+});
+
+
+describe('GET api/users', () => {
+    test('200 - returns JSON object of usernames', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ users: expect.any(Object)}) 
+            response.body.users.forEach((user) =>  {
+            expect(user).toMatchObject({
+                username : expect.any(String),
+            })
+        })
+    })
+})
+    test('404 - does not allow injection', () => {  
+        return request(app)
+        .get('/api/users DROP TABLE users')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Invalid URL')
+        })
+    })
+})
+
+describe.only('GET api/users/:username', () => {
+    test('200 - returns JSON object of usernames', () => {
+        return request(app)
+        .get('/api/users/icellusedkars')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ user: expect.any(Object)}) 
+            expect(response.body.user).toMatchObject({
+                username : expect.any(String),
+                avatar_url : expect.any(String),
+                name : expect.any(String)
+            })
+        })
+    })
+    test('404 - does not allow injection', () => {
+        return request(app)
+        .get('/api/users/DROP TABLE users')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not found')
+        })
+    })
+    test('404 - invalid user', () => {
+        return request(app)
+        .get('/api/users/1')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not found')
+        })
+    })
 })

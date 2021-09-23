@@ -54,10 +54,15 @@ exports.fetchCommentsByArticle = async (id) => {
 
 exports.postCommentsByArticle = async (id, data) => {
     if (!data.hasOwnProperty('body') && !data.hasOwnProperty('username')) {
-        return Promise.reject({status :204, msg : 'No Content'})
+        return Promise.reject({status :400, msg : 'Bad Request'})
     }
     const {username, body} = data
     const res = await db.query('INSERT INTO comments (author, article_id, body) VALUES ($1, $2, $3) RETURNING *;', [username, id, body])
     return res.rows[0] 
 }
 
+exports.removeArticleByID = async (id) => {
+    console.log(id)
+    const res = await db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [id] )
+    return res.rows
+}
