@@ -399,7 +399,7 @@ describe('GET api/users', () => {
     })
 })
 
-describe.only('GET api/users/:username', () => {
+describe('GET api/users/:username', () => {
     test('200 - returns JSON object of usernames', () => {
         return request(app)
         .get('/api/users/icellusedkars')
@@ -430,3 +430,46 @@ describe.only('GET api/users/:username', () => {
         })
     })
 })
+
+describe.only('PATCH api/comments/:comment_id', () => {
+    test('200 - returns JSON obj of updated comments', () => {
+        return request(app)
+        .patch('/api/comments/1').send({ "inc_votes": 5 })
+        .expect(201)
+        .then((response) => {
+            expect(response.body.article.votes).toBe(21)
+            expect(response.body.article).toMatchObject({
+                comment_id : expect.any(Number),
+                author : expect.any(String),
+                article_id : expect.any(Number),
+                votes : expect.any(Number),
+                body : expect.any(String),
+                created_at : expect.any(String)
+            })
+        }) 
+    })
+    test('400 does not allow injection', () => {
+        return request(app)
+        .patch('/api/comments/DROP TABLE comments').send({ "inc_votes": 5 })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })    
+    })
+    test('400 - bad request for non-numeric id', () => {
+        return request(app)
+        .patch('/api/comments/not-a-num').send({ "inc_votes": 5 })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })    
+    })
+    test('404 - not found for non-existent id', () => {
+        return request(app)
+        .patch('/api/comments/1507').send({ "inc_votes": 5 })
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not found')
+        })    
+    })
+});
