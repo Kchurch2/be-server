@@ -4,7 +4,6 @@ const format = require('pg-format')
 exports.selectArticleByID = async (id) => {
     const res = await db.query('SELECT * FROM articles\
                     WHERE article_id = $1', [id])
-    console.log(res.rows)
     return res.rows[0]
 }
 

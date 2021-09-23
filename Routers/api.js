@@ -10,6 +10,6 @@ apiRouter.use('/topics', topicsRouter)
 apiRouter.use('/articles', articlesRouter)
 
 apiRouter.route('/')
-    .get(getAPI)
+    .get(getAPI) 
 
 module.exports = apiRouter
