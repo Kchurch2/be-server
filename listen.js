@@ -3,7 +3,10 @@ const app = require('./app');
 const { PORT = 9090 } = process.env;
 
 app.listen(PORT, (err) => {
-  if (err) throw err;
+  if (err) {
+    console.log('error here')
+    throw err
+  };
   console.log(`Listening on ${PORT}...`);
   }
 );
