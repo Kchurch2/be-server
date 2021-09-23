@@ -2,7 +2,7 @@
 const format = require('pg-format')
 const db = require('../connection')
 
-exports.format = (data, fields) => {
+exports.formatData = (data, fields) => {
     const mapped = data.map((item) => {
         const returnArr = []
         for (let i = 0; i<fields.length; i++) {

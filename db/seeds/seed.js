@@ -1,6 +1,6 @@
 const db = require('../connection.js')
 const format = require('pg-format')
-const { format } = require('../utils/data-manipulation.js')
+const { formatData } = require('../utils/data-manipulation.js')
 
 const seed = async (data) => {
   const { articleData, commentData, topicData, userData } = data;
@@ -37,7 +37,7 @@ const seed = async (data) => {
               body TEXT NOT NULL,\
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
 }).then(() => {
-  const mappedTopics = format(topicData, ['slug', 'description'])
+  const mappedTopics = formatData(topicData, ['slug', 'description'])
   const insertIntoTopics = format(`
   INSERT INTO
   topics
@@ -48,7 +48,7 @@ const seed = async (data) => {
   mappedTopics)
 return db.query(insertIntoTopics)
 }).then(() => {
-  const mappedUsers = format(userData, ['username', 'avatar_url', 'name'])
+  const mappedUsers = formatData(userData, ['username', 'avatar_url', 'name'])
   const insertIntoUser = format(`
   INSERT INTO 
   users 
@@ -59,7 +59,7 @@ return db.query(insertIntoTopics)
   mappedUsers)
   return db.query(insertIntoUser)
 }) .then (() => {  
-  const mappedArticles = format(articleData, ['title', 'body', 'votes', 'topic', 'author', 'created_at'])
+  const mappedArticles = formatData(articleData, ['title', 'body', 'votes', 'topic', 'author', 'created_at'])
   const insertIntoArticles = format(`
   INSERT INTO
   articles
@@ -70,7 +70,7 @@ return db.query(insertIntoTopics)
   mappedArticles)
  return db.query(insertIntoArticles) 
 }).then(() => {
- const mappedComments = format(commentData, ['author', 'article_id', 'votes', 'created_at', 'body' ])
+ const mappedComments = formatData(commentData, ['author', 'article_id', 'votes', 'created_at', 'body' ])
  const insertIntoComments = format(`
  INSERT INTO
  comments
