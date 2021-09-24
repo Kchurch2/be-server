@@ -13,9 +13,3 @@ jobs:
 
       - name: cloneRepo
 			  uses: actions/checkout@v2
-
-			- name: install-dep
-			  run: npm install
-
-      - name: done
-        run: echo  'done'  
