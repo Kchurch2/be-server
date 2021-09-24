@@ -11,5 +11,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: install-dep
-			  run: npm install
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+
+      - name: Use PostgreSQL
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: 'my_db'
+          postgresql user: 'test_user'
+          postgresql password: 'test_password'
