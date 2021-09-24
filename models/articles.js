@@ -27,7 +27,6 @@ exports.selectArticles = async (query) => {
     if(query.limit) {
         if (parseInt(query.limit)) {
             limit = query.limit
-            console.log(limit)
         } else {
             return Promise.reject({status : 400, msg : 'Bad Request'})
         }
@@ -73,7 +72,6 @@ exports.fetchCommentsByArticle = async (id, query) => {
     if(query.limit) {
         if (parseInt(query.limit)) {
             limit = query.limit
-            console.log(limit)
         } else {
             return Promise.reject({status : 400, msg : 'Bad Request'})
         }
@@ -100,7 +98,6 @@ exports.postCommentsByArticle = async (id, data) => {
 }
 
 exports.removeArticleByID = async (id) => {
-    console.log(id)
     const res = await db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [id] )
     return res.rows
 }

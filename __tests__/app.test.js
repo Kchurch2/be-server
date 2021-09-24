@@ -48,7 +48,7 @@ describe('GET /api/articles/:articleID', () => {
                    votes : expect.any(Number),
                    topic : expect.any(String),
                    author : expect.any(String),
-                   created_at : expect.any(String)
+                   created_at : new Date(response.body.article.created_at).toJSON(),
             })   
         })      
     });
@@ -94,7 +94,7 @@ describe('PATCH /api/articles/:articleID', () => {
                    votes : expect.any(Number),
                    topic : expect.any(String),
                    author : expect.any(String),
-                   created_at : expect.any(String)
+                   created_at : new Date(response.body.article.created_at).toJSON(),
             })   
             expect(response.body.article.votes).toBe(105)
         })      
@@ -152,9 +152,10 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : expect.any(String),
+                created_at : new Date(article.created_at).toJSON(),
                 comment_count : expect.any(String)
                 }) 
+                console.log(article.created_at)
             })
             expect(response.body.articles[0].comment_count).toBe('1') 
             expect(response.body.articles).toBeSortedBy('created_at', {descending: true})    
@@ -183,7 +184,7 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : expect.any(String),
+                created_at : new Date(article.created_at).toJSON(),
                 comment_count : expect.any(String)
                 }) 
             })
@@ -237,7 +238,7 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : expect.any(String),
+                created_at : new Date(article.created_at).toJSON(),
                 comment_count : expect.any(String)
                 }) 
             })
@@ -285,7 +286,7 @@ describe('GET api/articles/:article_id/comments', () => {
                    body : expect.any(String),
                    votes : expect.any(Number),
                    author : expect.any(String),
-                   created_at : expect.any(String)
+                   created_at : new Date(comment.created_at).toJSON()
                     })
                 })
             expect(response.body.comments.length).toBe(10)
@@ -372,7 +373,7 @@ describe('POST api/articles/:article_id/comments', () => {
                 body : expect.any(String),
                 votes : expect.any(Number),
                 author : expect.any(String),
-                created_at : expect.any(String)
+                created_at : new Date(response.body.comment.created_at).toJSON(),
             }) 
         })
     });  
@@ -511,14 +512,14 @@ describe('PATCH api/comments/:comment_id', () => {
         .patch('/api/comments/1').send({ "inc_votes": 5 })
         .expect(201)
         .then((response) => {
-            expect(response.body.article.votes).toBe(21)
-            expect(response.body.article).toMatchObject({
+            expect(response.body.comment.votes).toBe(21)
+            expect(response.body.comment).toMatchObject({
                 comment_id : expect.any(Number),
                 author : expect.any(String),
                 article_id : expect.any(Number),
                 votes : expect.any(Number),
                 body : expect.any(String),
-                created_at : expect.any(String)
+                created_at : new Date(response.body.comment.created_at).toJSON(),
             })
         }) 
     })

@@ -8,7 +8,7 @@ exports.patchComments = async (req, res, next) => {
         const comment = await editComments(votes, id)
         if (comment.length > 0) { 
             const returnComment = comment[0] 
-            return res.status(201).send({ article: returnComment })
+            return res.status(201).send({ comment: returnComment })
           } else {
             await Promise.reject({ status: 404, msg: 'Not found'})
             }
