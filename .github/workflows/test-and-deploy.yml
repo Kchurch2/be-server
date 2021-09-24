@@ -10,3 +10,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+
+      - name: install-dep
+			  run: npm install
