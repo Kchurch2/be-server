@@ -12,7 +12,7 @@ jobs:
         run: echo  'hello from CI'
 
       - name: cloneRepo
-			  uses: actions/checkout@v2		// login, clone & cd into repo 
+			  uses: actions/checkout@v2
 
 			- name: install-dep
 			  run: npm install
