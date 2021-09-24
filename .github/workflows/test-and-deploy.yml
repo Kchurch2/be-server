@@ -3,3 +3,16 @@ on:
   push:
     branches:
       - main
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest 
+		steps:
+			- name: cloneRepo
+			  uses: actions/checkout@v2		// login, clone & cd into repo 
+
+			- name: install-dep
+			  run: npm install 
+      
+      - name: done
+        run: echo  'hello from CI'
