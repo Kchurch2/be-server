@@ -15,12 +15,31 @@ exports.editArticleByID = async (votes, id) => {
     return res.rows           
 }
 
-exports.selectArticles = async (id, query) => {
+exports.selectArticles = async (query) => {
     let sort_by  = 'created_at'
     let sort_order = 'DESC'
-    let topic_str = ''
+    let limit = 10
+    let page = 0
+    let offset =0
     let queryStr1 = 'SELECT articles.*, count(comments.article_id) as comment_Count FROM articles JOIN comments ON articles.article_id = comments.article_id'
     let queryStr2 = ' GROUP BY articles.article_id'
+    let queryStr4 = ' LIMIT $1 OFFSET $2'
+    if(query.limit) {
+        if (parseInt(query.limit)) {
+            limit = query.limit
+            console.log(limit)
+        } else {
+            return Promise.reject({status : 400, msg : 'Bad Request'})
+        }
+    }
+    if (query.page) {
+        if (parseInt(query.page)) {
+            page = query.page
+            offset = ((page-1) * limit)
+        } else {
+            return Promise.reject({status : 400, msg : 'Bad Request'})
+        }
+    }
     if(query.sort_by) {
         if(query.sort_by == 'title' || query.sort_by == 'author' || query.sort_by== 'topic' || query.sort_by == 'created_at' || query.sort_by == 'comments_count') {
         sort_by = query.sort_by
@@ -35,15 +54,17 @@ exports.selectArticles = async (id, query) => {
             return Promise.reject({status : 400, msg : 'Bad Request'})
         }
     }
-    const queryVal = []
+    const queryVal = [limit, offset]
     if(query.topic) {
         let topic = query.topic.toLowerCase()
-        queryStr1 += ' WHERE articles.topic = $1'
+        queryStr1 += ' WHERE articles.topic = $3'
         queryVal.push(topic)
     }
     let queryStr3 = ` ORDER BY ${sort_by} ${sort_order}`
-        queryStr1 += queryStr2 + queryStr3 + ';'    
+    queryStr1 += queryStr2 + queryStr3 + queryStr4 + ';'  
+    console.log(queryStr1)  
     const res = await db.query(queryStr1, queryVal)
+    console.log(res.rows)
     return res.rows
 }
 

@@ -19,10 +19,9 @@ exports.getArticles = async(req, res, next) => {
     if(req.params.article_id && !parseInt(req.params.article_id)){
       await Promise.reject({ status: 400, msg: 'Bad Request'})
     } else {    
-      const id = req.params.article_id
       const query = req.query
-      const articles = await selectArticles(id, query)
-      if (articles.length > 1) { 
+      const articles = await selectArticles(query)
+      if (articles.length >= 1) { 
         return res.status(200).send({ articles })
       } else {
         await checkExists('topics', 'slug', req.query.topic)

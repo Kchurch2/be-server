@@ -136,7 +136,7 @@ describe('PATCH /api/articles/:articleID', () => {
     });
 })  
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
     test('200: responds with JSON object of aricles', () => {
         return request(app)
         .get('/api/articles')
@@ -221,7 +221,55 @@ describe('GET /api/articles', () => {
         .then((response) => {
             expect(response.body.articles).toEqual([])
         })    
-    }) 
+    })
+    test('200 - returns JSON object with limit', () =>{
+        return request(app)
+        .get('/api/articles?limit=1')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ articles : expect.any(Array)})
+            expect(response.body.articles).toHaveLength(1)
+            response.body.articles.forEach((article) => {
+            expect(article).toMatchObject({            
+                article_id : expect.any(Number),
+                title : expect.any(String),
+                body : expect.any(String),
+                votes : expect.any(Number),
+                topic : expect.any(String),
+                author : expect.any(String),
+                created_at : expect.any(String),
+                comment_count : expect.any(String)
+                }) 
+            })
+            expect(response.body.articles[0].article_id).toBe(6)    
+        })
+    })
+    test('200 - returns JSON object with limit & pagination', () => {
+        return request(app)
+        .get('/api/articles?limit=1&page=2')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ articles : expect.any(Array)})
+            expect(response.body.articles).toHaveLength(1)
+            expect(response.body.articles[0].article_id).toBe(5)    
+        })
+    })
+    test('404 - returns Not found for out of range page', () => {
+        return request(app)
+        .get('/api/articles?limit=1&page=400')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not found')
+        })
+    })
+    test('400 bad Request - does not allow injection', () => {
+        return request(app)
+        .get('/api/articles?limit=1&page=DROP TABLE articles')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })
+    })
 })
 
 describe('GET api/articles/:article_id/comments', () => {
