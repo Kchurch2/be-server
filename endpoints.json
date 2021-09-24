@@ -89,6 +89,29 @@
           "body": "hi"
         }
     }
+  }, 
+  "GET /api/users": {
+    "description": "provides a json object of usernames",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+          {
+            "username": "tickle122"
+          }
+        ]
+    }
+  }, 
+  "GET /api/users/username": {
+    "description": "provides a json object of user information",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "tickle122",
+        "name": "Tom Tickle",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+      }
+    }
   }
+
 }
 
