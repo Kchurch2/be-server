@@ -23,8 +23,10 @@ exports.getArticles = async(req, res, next) => {
       const articles = await selectArticles(query)
       if (articles.length >= 1) { 
         return res.status(200).send({ articles })
-      } else {
+      } else if (req.query.topic) {
         await checkExists('topics', 'slug', req.query.topic)
+      } else {
+        res.status(200).send({ articles })
       }
     res.status(200).send({ articles })
     }
@@ -60,7 +62,8 @@ exports.patchArticleByID = async(req, res, next) => {
 exports.getCommentsByArticle = async (req, res, next) => {
   try {
   const id = req.params.article_id
-  const comments = await fetchCommentsByArticle(id)
+  const query = req.query
+  const comments = await fetchCommentsByArticle(id, query)
   if (comments.length === 0) {
     await checkExists('articles', 'article_id', id)
   }

@@ -61,15 +61,32 @@ exports.selectArticles = async (query) => {
         queryVal.push(topic)
     }
     let queryStr3 = ` ORDER BY ${sort_by} ${sort_order}`
-    queryStr1 += queryStr2 + queryStr3 + queryStr4 + ';'  
-    console.log(queryStr1)  
+    queryStr1 += queryStr2 + queryStr3 + queryStr4 + ';'   
     const res = await db.query(queryStr1, queryVal)
-    console.log(res.rows)
     return res.rows
 }
 
-exports.fetchCommentsByArticle = async (id) => {
-    const res = await db.query('SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1', [id])
+exports.fetchCommentsByArticle = async (id, query) => {
+    let limit = 10
+    let page = 0
+    let offset = 0
+    if(query.limit) {
+        if (parseInt(query.limit)) {
+            limit = query.limit
+            console.log(limit)
+        } else {
+            return Promise.reject({status : 400, msg : 'Bad Request'})
+        }
+    }
+    if (query.page) {
+        if (parseInt(query.page)) {
+            page = query.page
+            offset = ((page-1) * limit)
+        } else {
+            return Promise.reject({status : 400, msg : 'Bad Request'})
+        }
+    }
+    const res = await db.query('SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3', [id, limit, offset])
     return res.rows    
 }
 

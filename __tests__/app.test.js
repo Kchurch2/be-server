@@ -136,7 +136,7 @@ describe('PATCH /api/articles/:articleID', () => {
     });
 })  
 
-describe.only('GET /api/articles', () => {
+describe('GET /api/articles', () => {
     test('200: responds with JSON object of aricles', () => {
         return request(app)
         .get('/api/articles')
@@ -254,12 +254,12 @@ describe.only('GET /api/articles', () => {
             expect(response.body.articles[0].article_id).toBe(5)    
         })
     })
-    test('404 - returns Not found for out of range page', () => {
+    test('200 - returns empty object for out of range', () => {
         return request(app)
         .get('/api/articles?limit=1&page=400')
-        .expect(404)
+        .expect(200)
         .then((response) => {
-            expect(response.body.msg).toBe('Not found')
+            expect(response.body.articles).toHaveLength(0)
         })
     })
     test('400 bad Request - does not allow injection', () => {
@@ -288,7 +288,33 @@ describe('GET api/articles/:article_id/comments', () => {
                    created_at : expect.any(String)
                     })
                 })
-            expect(response.body.comments.length).toBe(13)
+            expect(response.body.comments.length).toBe(10)
+        }) 
+    })
+    test('200 - respond with JSON object of comments by article using pagination', () => {
+        return request(app)
+        .get('/api/articles/1/comments?page=2')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ comments : expect.any(Object)})
+            expect(response.body.comments.length).toBe(3)
+        }) 
+    })
+    test('200 - respond with JSON object of comments by article using non-default limit', () => {
+        return request(app)
+        .get('/api/articles/1/comments?page=2&limit=5')
+        .expect(200)
+        .then((response) => {
+            expect(response.body).toMatchObject({ comments : expect.any(Object)})
+            expect(response.body.comments.length).toBe(5)
+        }) 
+    })
+    test('200 - empty page for out of range', () => {
+        return request(app)
+        .get('/api/articles/1/comments?page=100&limit=5')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.comments.length).toBe(0)
         }) 
     })
     test('404 - Invalid URL for typo', () => {
@@ -479,7 +505,7 @@ describe('GET api/users/:username', () => {
     })
 })
 
-describe.only('PATCH api/comments/:comment_id', () => {
+describe('PATCH api/comments/:comment_id', () => {
     test('200 - returns JSON obj of updated comments', () => {
         return request(app)
         .patch('/api/comments/1').send({ "inc_votes": 5 })
