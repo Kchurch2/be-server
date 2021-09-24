@@ -7,6 +7,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-      steps:
-        - name: done
-          run: echo  'hello from CI'
+    steps:
+      - name: done
+        run: echo  'hello from CI'
