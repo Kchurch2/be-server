@@ -8,11 +8,5 @@ jobs:
     name: Test
     runs-on: ubuntu-latest 
 		steps:
-      - name: cloneRepo
-        uses: actions/checkout@v2
-
-      - name: install-dep
-        run: npm install 
-        
       - name: done
         run: echo  'hello from CI'
