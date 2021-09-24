@@ -8,8 +8,5 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: done
-        run: echo  'hello from CI'
-
-      - name: cloneRepo
-			  uses: actions/checkout@v2
+      - name: Checkout Repo
+       uses: actions/checkout@v2
