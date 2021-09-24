@@ -5,7 +5,8 @@ on:
       - main
 jobs:
   test:
-    runs-on: ubuntu-latest 
-		steps:
-      - name: done
-        run: echo  'hello from CI'
+    name: Test
+    runs-on: ubuntu-latest
+      steps:
+        - name: done
+          run: echo  'hello from CI'
