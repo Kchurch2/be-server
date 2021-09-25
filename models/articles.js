@@ -2,8 +2,8 @@ const db = require('../db/connection');
 const format = require('pg-format')
 
 exports.selectArticleByID = async (id) => {
-    const res = await db.query('SELECT * FROM articles\
-                    WHERE article_id = $1', [id])
+    const res = await db.query('SELECT articles.*, (SELECT COUNT(comments.article_id) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles WHERE articles.article_id = $1;', [id])
+    console.log(res.rows)
     return res.rows[0]
 }
 
@@ -21,7 +21,7 @@ exports.selectArticles = async (query) => {
     let limit = 10
     let page = 0
     let offset =0
-    let queryStr1 = 'SELECT articles.*, count(comments.article_id) as comment_Count FROM articles JOIN comments ON articles.article_id = comments.article_id'
+    let queryStr1 = 'SELECT articles.*, count(comments.article_id) as comment_Count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id'
     let queryStr2 = ' GROUP BY articles.article_id'
     let queryStr4 = ' LIMIT $1 OFFSET $2'
     if(query.limit) {

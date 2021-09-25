@@ -35,9 +35,9 @@ describe('GET api/topics', () => {
 });
 
 describe('GET /api/articles/:articleID', () => {
-    test('200 - respondse with JSON object', () => {
+    test('200 - responds with JSON object', () => {
         return request(app)
-        .get('/api/articles/1')
+        .get('/api/articles/11')
         .expect(200)
         .then((response) => {
             expect(response.body).toMatchObject({ article: expect.any(Object)})
@@ -48,7 +48,8 @@ describe('GET /api/articles/:articleID', () => {
                    votes : expect.any(Number),
                    topic : expect.any(String),
                    author : expect.any(String),
-                   created_at : new Date(response.body.article.created_at).toJSON(),
+                   comment_count : expect.any(String),
+                   created_at : new Date(response.body.article.created_at).toJSON()
             })   
         })      
     });
@@ -94,7 +95,7 @@ describe('PATCH /api/articles/:articleID', () => {
                    votes : expect.any(Number),
                    topic : expect.any(String),
                    author : expect.any(String),
-                   created_at : new Date(response.body.article.created_at).toJSON(),
+                   created_at : new Date(response.body.article.created_at).toJSON()
             })   
             expect(response.body.article.votes).toBe(105)
         })      
@@ -143,7 +144,7 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then((response) => {
             expect(response.body).toMatchObject({ articles : expect.any(Array)})
-            expect(response.body.articles).toHaveLength(4)
+            expect(response.body.articles).toHaveLength(10)
             response.body.articles.forEach((article) => {
             expect(article).toMatchObject({            
                 article_id : expect.any(Number),
@@ -152,12 +153,11 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : new Date(article.created_at).toJSON(),
-                comment_count : expect.any(String)
+                comment_count : expect.any(String),
+                created_at : new Date(article.created_at).toJSON()
                 }) 
-                console.log(article.created_at)
             })
-            expect(response.body.articles[0].comment_count).toBe('1') 
+            expect(response.body.articles[0].comment_count).toBe('0') 
             expect(response.body.articles).toBeSortedBy('created_at', {descending: true})    
         })
     }) 
@@ -175,7 +175,7 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then((response) => {
             expect(response.body).toMatchObject({ articles : expect.any(Array)})
-            expect(response.body.articles).toHaveLength(4)
+            expect(response.body.articles).toHaveLength(10)
             response.body.articles.forEach((article) => {
             expect(article).toMatchObject({            
                 article_id : expect.any(Number),
@@ -184,8 +184,8 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : new Date(article.created_at).toJSON(),
-                comment_count : expect.any(String)
+                created_at : expect.any(String),
+                created_at : new Date(article.created_at).toJSON()
                 }) 
             })
             expect(response.body.articles).toBeSortedBy('author', {descending: false})   
@@ -194,6 +194,14 @@ describe('GET /api/articles', () => {
     test('400 - Does not allow injection', () => {
         return request(app)
         .get('/api/articles?sort_by=author&order=DROP TABLE topics')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
+        })
+    })
+    test('400 - for invalid sort', () => {
+        return request(app)
+        .get('/api/articles?sort_by=banana')
         .expect(400)
         .then((response) => {
             expect(response.body.msg).toBe('Bad Request')
@@ -238,11 +246,11 @@ describe('GET /api/articles', () => {
                 votes : expect.any(Number),
                 topic : expect.any(String),
                 author : expect.any(String),
-                created_at : new Date(article.created_at).toJSON(),
-                comment_count : expect.any(String)
+                created_at : expect.any(String),
+                created_at : new Date(article.created_at).toJSON()
                 }) 
             })
-            expect(response.body.articles[0].article_id).toBe(6)    
+            expect(response.body.articles[0].article_id).toBe(3)    
         })
     })
     test('200 - returns JSON object with limit & pagination', () => {
@@ -252,7 +260,7 @@ describe('GET /api/articles', () => {
         .then((response) => {
             expect(response.body).toMatchObject({ articles : expect.any(Array)})
             expect(response.body.articles).toHaveLength(1)
-            expect(response.body.articles[0].article_id).toBe(5)    
+            expect(response.body.articles[0].article_id).toBe(6)    
         })
     })
     test('200 - returns empty object for out of range', () => {
@@ -373,7 +381,7 @@ describe('POST api/articles/:article_id/comments', () => {
                 body : expect.any(String),
                 votes : expect.any(Number),
                 author : expect.any(String),
-                created_at : new Date(response.body.comment.created_at).toJSON(),
+                created_at : new Date(response.body.comment.created_at).toJSON()
             }) 
         })
     });  
@@ -401,6 +409,14 @@ describe('POST api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Bad Request')
         }) 
     })  
+    test('404 - Not found - username does not exist content', () => {
+        return request(app)
+        .post('/api/articles/1/comments').send({username:'not-a-user', body: 'test comment' })
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not found')
+        }) 
+    }) 
 });
 
 describe('GET api/', () => {
@@ -512,14 +528,14 @@ describe('PATCH api/comments/:comment_id', () => {
         .patch('/api/comments/1').send({ "inc_votes": 5 })
         .expect(201)
         .then((response) => {
-            expect(response.body.comment.votes).toBe(21)
+           expect(response.body.comment.votes).toBe(21)
             expect(response.body.comment).toMatchObject({
                 comment_id : expect.any(Number),
                 author : expect.any(String),
                 article_id : expect.any(Number),
                 votes : expect.any(Number),
                 body : expect.any(String),
-                created_at : new Date(response.body.comment.created_at).toJSON(),
+                created_at : new Date(response.body.comment.created_at).toJSON()
             })
         }) 
     })
