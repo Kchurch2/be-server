@@ -447,12 +447,12 @@ describe('DELETE api/articles/articleID', () => {
             expect(response.body.msg).toBe('Bad Request')
         })
     })
-    test('204  - out of range', () => {
+    test('404  - out of range', () => {
         return request(app)
         .delete('/api/articles/305')
-        .expect(204)
+        .expect(404)
         .then((response) => {
-            expect(response.body).toMatchObject({})
+            expect(response.body.msg).toBe('Not found')
         })
     });
     test('404 not found for incorrect string', () => {
@@ -522,7 +522,7 @@ describe('GET api/users/:username', () => {
     })
 })
 
-describe('PATCH api/comments/:comment_id', () => {
+describe.only('PATCH api/comments/:comment_id', () => {
     test('200 - returns JSON obj of updated comments', () => {
         return request(app)
         .patch('/api/comments/1').send({ "inc_votes": 5 })
@@ -561,6 +561,14 @@ describe('PATCH api/comments/:comment_id', () => {
         .expect(404)
         .then((response) => {
             expect(response.body.msg).toBe('Not found')
+        })    
+    })
+    test.only('400 - bad request for non-numeric id', () => {
+        return request(app)
+        .patch('/api/comments/1').send({})
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad Request')
         })    
     })
 });

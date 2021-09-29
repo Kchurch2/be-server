@@ -131,26 +131,26 @@
 ​
 - `DELETE /api/comments/:comment_id`
 ​
-- [ ] Status 204, deletes comment from database
-- [ ] Status 404, non existant ID, e.g 999
-- [ ] Status 400, invalid ID, e.g "not-an-id"
+- [✓] Status 204, deletes comment from database
+- [✓] Status 404, non existant ID, e.g 999
+- [✓] Status 400, invalid ID, e.g "not-an-id"
 ​
 - `GET /api/users`
 ​
-- [ ] Status 200, responds with array of user objects
+- [✓] Status 200, responds with array of user objects
 ​
 - `GET /api/users/:username`
 ​
-- [ ] Status 200, responds with single user object
-- [ ] Status 404, non existant ID, e.g 999
+- [✓] Status 200, responds with single user object
+- [✓] Status 404, non existant ID, e.g 999
 - [ ] Status 400, invalid ID, e.g "not-an-id"
 ​
 - `PATCH /api/comments/:comment_id`
 ​
-  - [ ] Status 200, updated single comment object
-  - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
-  - [ ] Status 404, non existent ID, e.g. 0 or 9999
-  - [ ] Status 400, missing / incorrect body, e.g. `inc_votes` property is not a number, or missing
+  - [✓] Status 200, updated single comment object
+  - [✓] Status 400, invalid ID, e.g. string of "not-an-id"
+  - [✓] Status 404, non existent ID, e.g. 0 or 9999
+  - [✓] Status 400, missing / incorrect body, e.g. `inc_votes` property is not a number, or missing
 ​
 ## Extra Advanced Tasks
 ​
