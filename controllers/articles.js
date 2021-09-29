@@ -36,11 +36,15 @@ exports.getArticles = async(req, res, next) => {
   }
 
 exports.patchArticleByID = async(req, res, next) => {
+    let votes = 0
+    if (parseInt(req.body.inc_votes)) {
+      votes = req.body.inc_votes
+    }
     const id = req.params.article_id
-    const votes = req.body.inc_votes
-    if (parseInt(votes)) {
+    const body = req.body.body
+    if (parseInt(req.body.inc_votes) || req.body.body) {
     try {
-      const article = await editArticleByID(votes, id)
+      const article = await editArticleByID(votes, id, body)
         if (article.length > 0) { 
           const returnArticle = article[0] 
           return res.status(201).send({ article: returnArticle })

@@ -1,11 +1,15 @@
 const { editComments } = require('../models/comments.js')
 
 exports.patchComments = async (req, res, next) => {
+    let votes = 0
+    if (parseInt(req.body.inc_votes)) {
+      votes = req.body.inc_votes
+    }
     const id = req.params.comment_id
-    const votes = req.body.inc_votes
-    if (parseInt(votes)) {
+    const body = req.body.body
+    if (parseInt(req.body.inc_votes) || req.body.body) {
         try {
-        const comment = await editComments(votes, id)
+        const comment = await editComments(votes, id, body)
         if (comment.length > 0) { 
             const returnComment = comment[0] 
             return res.status(201).send({ comment: returnComment })

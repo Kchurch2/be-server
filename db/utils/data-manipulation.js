@@ -15,7 +15,7 @@ return mapped
 
 exports.checkExists = async (table, column, ref) => {
     const queryStr = format('SELECT * FROM %I WHERE %I = $1;', table, column);
-    const dbOutput = await db.query(queryStr, [parseInt(ref)]);
+    const dbOutput = await db.query(queryStr, [ref]);
     if (dbOutput.rows.length === 0) {
         return Promise.reject({ status: 404, msg: 'Not found' });
     }

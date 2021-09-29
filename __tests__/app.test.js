@@ -84,7 +84,7 @@ describe('GET /api/articles/:articleID', () => {
 describe('PATCH /api/articles/:articleID', () => {
     test('200 - responds with JSON object of altered votes', () => {
         return request(app)
-        .patch('/api/articles/1').send({ "inc_votes": 5 })
+        .patch('/api/articles/1').send({ "inc_votes": 5, "body": 'new Body' })
         .expect(201)
         .then((response) => {
             expect(response.body).toMatchObject({ article: expect.any(Object)})
@@ -98,6 +98,7 @@ describe('PATCH /api/articles/:articleID', () => {
                    created_at : new Date(response.body.article.created_at).toJSON()
             })   
             expect(response.body.article.votes).toBe(105)
+            expect(response.body.article.body).toBe('new Body')
         })      
     });
     test('400 - Bad Request - does not allow injections', () => {
@@ -522,13 +523,12 @@ describe('GET api/users/:username', () => {
     })
 })
 
-describe.only('PATCH api/comments/:comment_id', () => {
+describe('PATCH api/comments/:comment_id', () => {
     test('200 - returns JSON obj of updated comments', () => {
         return request(app)
-        .patch('/api/comments/1').send({ "inc_votes": 5 })
+        .patch('/api/comments/1').send({ "inc_votes": 5, "body": 'new Body' })
         .expect(201)
         .then((response) => {
-           expect(response.body.comment.votes).toBe(21)
             expect(response.body.comment).toMatchObject({
                 comment_id : expect.any(Number),
                 author : expect.any(String),
@@ -537,6 +537,8 @@ describe.only('PATCH api/comments/:comment_id', () => {
                 body : expect.any(String),
                 created_at : new Date(response.body.comment.created_at).toJSON()
             })
+            expect(response.body.comment.votes).toBe(21)
+            expect(response.body.comment.body).toBe('new Body')   
         }) 
     })
     test('400 does not allow injection', () => {
@@ -563,7 +565,7 @@ describe.only('PATCH api/comments/:comment_id', () => {
             expect(response.body.msg).toBe('Not found')
         })    
     })
-    test.only('400 - bad request for non-numeric id', () => {
+    test('400 - bad request for non-numeric id', () => {
         return request(app)
         .patch('/api/comments/1').send({})
         .expect(400)

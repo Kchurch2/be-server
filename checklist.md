@@ -156,8 +156,8 @@
 ​
 ### Easier
 ​
-- [ ] Patch: Edit an article body
-- [ ] Patch: Edit a comment body
+- [✓] Patch: Edit an article body
+- [✓] Patch: Edit a comment body
 - [ ] Patch: Edit a user's information
 - [ ] Get: Search for an article by title
 - [ ] Post: add a new user

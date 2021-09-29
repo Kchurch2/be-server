@@ -3,15 +3,26 @@ const format = require('pg-format')
 
 exports.selectArticleByID = async (id) => {
     const res = await db.query('SELECT articles.*, (SELECT COUNT(comments.article_id) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles WHERE articles.article_id = $1;', [id])
-    console.log(res.rows)
     return res.rows[0]
 }
 
-exports.editArticleByID = async (votes, id) => {
-    const res = await db.query('UPDATE articles\
-                    SET votes = votes + $1\
-                    WHERE article_id = $2\
-                    RETURNING *;', [votes, id])
+exports.editArticleByID = async (votes, id, body) => {
+    let queryStr = ''
+    let queryVal = []
+    if (body) {
+        queryStr = 'UPDATE articles\
+        SET votes = votes + $1, body = $2\
+        WHERE article_id = $3\
+        RETURNING *;' 
+        queryVal = [votes, body, id]
+    } else {
+        queryStr = 'UPDATE articles\
+        SET votes = votes + $1\
+        WHERE article_id = $2\
+        RETURNING *;' 
+        queryVal = [votes, id]  
+    }
+    const res = await db.query(queryStr, queryVal)
     return res.rows           
 }
 
@@ -99,6 +110,5 @@ exports.postCommentsByArticle = async (id, data) => {
 
 exports.removeArticleByID = async (id) => {
     const res = await db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [id] )
-    console.log(res.rows)
     return res.rows
 }
