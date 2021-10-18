@@ -1,10 +1,11 @@
 const express = require('express')
 const { handlePSQL400Errors, handleCustomErrors, handle23503 } = require('./errors/error.js')
-
+const cors = require('cors');
 const apiRouter = require('./routers/api.js');
 
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use('/api', apiRouter)
