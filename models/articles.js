@@ -32,7 +32,7 @@ exports.selectArticles = async (query) => {
     let limit = 10
     let page = 0
     let offset =0
-    let queryStr1 = 'SELECT articles.*, count(comments.article_id) as comment_Count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id'
+    let queryStr1 = 'SELECT articles.*, count(comments.article_id) as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id'
     let queryStr2 = ' GROUP BY articles.article_id'
     let queryStr4 = ' LIMIT $1 OFFSET $2'
     if(query.limit) {
@@ -51,7 +51,7 @@ exports.selectArticles = async (query) => {
         }
     }
     if(query.sort_by) {
-        if(query.sort_by == 'title' || query.sort_by == 'author' || query.sort_by== 'topic' || query.sort_by == 'created_at' || query.sort_by == 'comments_count') {
+        if(query.sort_by == 'title' || query.sort_by == 'author' || query.sort_by== 'topic' || query.sort_by == 'created_at' || query.sort_by == 'comment_count' || query.sort_by == 'votes') {
         sort_by = query.sort_by
         } else { 
             return Promise.reject({status : 400, msg : 'Bad Request'})

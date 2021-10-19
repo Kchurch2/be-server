@@ -138,7 +138,7 @@ describe('PATCH /api/articles/:articleID', () => {
     });
 })  
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
     test('200: responds with JSON object of aricles', () => {
         return request(app)
         .get('/api/articles')
@@ -214,6 +214,15 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then((response) => {
             expect(response.body.articles[0].topic).toBe('cats')
+        })    
+    })
+    test.only('200 - responds with JSON filtered by topic', () =>{
+        return request(app)
+        .get('/api/articles?sort_by=votes')
+        .expect(200)
+        .then((response) => {
+            console.log(response.body.articles)
+            expect(response.body.articles[0].topic).toBe('mitch')
         })    
     })
     test('404 - Does not allow injection', () => {
