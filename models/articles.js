@@ -118,6 +118,6 @@ exports.postCommentsByArticle = async (id, data) => {
 }
 
 exports.removeArticleByID = async (id) => {
-    const res = await db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [id] )
+    const res = await db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [parseInt(id)] )
     return res.rows
 }
