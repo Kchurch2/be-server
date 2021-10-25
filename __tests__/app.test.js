@@ -495,7 +495,7 @@ describe.only('DELETE api/articles/articleID', () => {
         .delete('/api/articles/305')
         .expect(404)
         .then((response) => {
-            expect(response.body.msg).toBe('Not found')
+            expect(response.body.msg).toBe('Not found ID')
         })
     });
     test('404 not found for incorrect string', () => {
