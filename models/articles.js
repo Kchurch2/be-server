@@ -78,6 +78,7 @@ exports.selectArticles = async (query) => {
 
 exports.fetchCommentsByArticle = async (id, query) => {
     let limit = 10
+    let sort_by = "created_at"
     let page = 0
     let offset = 0
     if(query.limit) {
@@ -95,7 +96,14 @@ exports.fetchCommentsByArticle = async (id, query) => {
             return Promise.reject({status : 400, msg : 'Bad Request'})
         }
     }
-    const res = await db.query('SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3', [id, limit, offset])
+    if (query.sort_by) {
+        if (query.sort_by === "votes" || query.sort_by === "created_at") {
+            sort_by = query.sort_by
+        } else { 
+            return Promise.reject({status : 400, msg : 'Bad Request'})
+        }
+    }
+    const res = await db.query(`SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1  ORDER BY ${sort_by} DESC LIMIT $2 OFFSET $3;`, [id, limit, offset])
     return res.rows    
 }
 
@@ -105,6 +113,7 @@ exports.postCommentsByArticle = async (id, data) => {
     }
     const {username, body} = data
     const res = await db.query('INSERT INTO comments (author, article_id, body) VALUES ($1, $2, $3) RETURNING *;', [username, id, body])
+    console.log(res)
     return res.rows[0] 
 }
 

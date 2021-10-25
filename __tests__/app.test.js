@@ -138,7 +138,7 @@ describe('PATCH /api/articles/:articleID', () => {
     });
 })  
 
-describe.only('GET /api/articles', () => {
+describe('GET /api/articles', () => {
     test('200: responds with JSON object of aricles', () => {
         return request(app)
         .get('/api/articles')
@@ -216,7 +216,7 @@ describe.only('GET /api/articles', () => {
             expect(response.body.articles[0].topic).toBe('cats')
         })    
     })
-    test.only('200 - responds with JSON filtered by topic', () =>{
+    test('200 - responds with JSON filtered by topic', () =>{
         return request(app)
         .get('/api/articles?sort_by=votes')
         .expect(200)
@@ -291,7 +291,7 @@ describe.only('GET /api/articles', () => {
     })
 })
 
-describe('GET api/articles/:article_id/comments', () => {
+describe.only('GET api/articles/:article_id/comments', () => {
     test('200 - respond with JSON object of comments by article', () => {
         return request(app)
         .get('/api/articles/1/comments')
@@ -377,6 +377,25 @@ describe('GET api/articles/:article_id/comments', () => {
             expect(response.body.comments).toEqual([])
         }) 
     });
+    test.only('200 - empty array for id with no comments', () => {
+        return request(app)
+        .get('/api/articles/1/comments?sort_by=votes')
+        .expect(200)
+        .then((response) => {
+            console.log(response.body)
+            expect(response.body).toMatchObject({ comments : expect.any(Object)})
+            response.body.comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+                   comment_id : expect.any(Number),
+                   body : expect.any(String),
+                   votes : expect.any(Number),
+                   author : expect.any(String),
+                   created_at : new Date(comment.created_at).toJSON()
+                    })
+                })
+            expect(response.body.comments.length).toBe(10)
+        }) 
+    });
 });
 
 describe('POST api/articles/:article_id/comments', () => {
@@ -449,6 +468,14 @@ describe('DELETE api/articles/articleID', () => {
             expect(response.body).toMatchObject({})
         })
     })
+    test('204 No Content for Successful Test', () => {
+        return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+        .then((response) => {
+            expect(response.body).toMatchObject({})
+        })
+    })
     test('400 bad request - injection', () => {
         return request(app)
         .delete('/api/articles/ DROP TABLE articles')
@@ -474,7 +501,6 @@ describe('DELETE api/articles/articleID', () => {
         })
     });
 });
-
 
 describe('GET api/users', () => {
     test('200 - returns JSON object of usernames', () => {
