@@ -24,14 +24,14 @@ const seed = async (data) => {
               title VARCHAR(250) NOT NULL,\
               body TEXT NOT NULL,\
               votes INT DEFAULT 0,\
-              topic VARCHAR(20) REFERENCES topics(slug),\
+              topic VARCHAR(20) REFERENCES topics(slug) ON DELETE CASCADE,\
               author VARCHAR(20) REFERENCES users(username) ON DELETE CASCADE,\
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
   })
 .then(() => {
               return db.query('CREATE TABLE comments\
               (comment_id SERIAL PRIMARY KEY,\
-              author VARCHAR(20) REFERENCES users(username),\
+              author VARCHAR(20) REFERENCES users(username) ON DELETE CASCADE,\
               article_id INT REFERENCES articles(article_id) ON DELETE CASCADE,\
               votes INT DEFAULT 0,\
               body TEXT NOT NULL,\
