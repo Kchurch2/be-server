@@ -92,12 +92,10 @@ exports.deleteArticleByID = async (req, res, next) => {
   try {
     const id = req.params.article_id
     const article = await removeArticleByID(id)
-    console.log(article)
-    if(article.length === 0) {
+    if(article.length == 0) {
       await checkExists('articles', 'article_id', id)
     }
-    res.status(204).send(article[0])
-
+    res.status(204).send({ article })
   } catch (err) {
     next(err)
   }
